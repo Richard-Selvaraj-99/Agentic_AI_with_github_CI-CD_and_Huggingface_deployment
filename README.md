@@ -3,12 +3,16 @@
 title: Agentic AI Web Chatbot
 emoji: 🤖
 colorFrom: blue
-colorTo: indigo
+colorTo: green
 sdk: streamlit
-python_version: "3.10"
+sdk_version: "1.42.0"
+python_version: "3.12"
 app_file: app.py
 pinned: false
 ---
+
+# Agentic AI Web Chatbot
+This is a LangGraph-powered agentic chatbot deployed via GitHub Actions.
 </details>
 
 # working Hugging_face link 
