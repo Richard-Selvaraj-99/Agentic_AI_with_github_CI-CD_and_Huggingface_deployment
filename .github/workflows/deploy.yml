@@ -1,0 +1,97 @@
+name: Production CI/CD Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+
+
+  push:
+    branches:
+      - main
+
+
+jobs:
+
+  # ──────────────────────────────────────────
+  # JOB 1: Continuous Integration (Tests)
+  # ──────────────────────────────────────────
+  ci:
+    name: Run Tests (CI)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          pytest 
+
+  # ──────────────────────────────────────────
+  # JOB 2: Build & Push Docker (CD Part 1)
+  # ──────────────────────────────────────────
+  docker:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    needs: ci
+    if: github.event_name == 'push'   # Only run after merge
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push with Caching
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/agentic-chatbot:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ──────────────────────────────────────────
+  # JOB 3: Deploy to Hugging Face (CD Part 2)
+  # ──────────────────────────────────────────
+  huggingface:
+    name: Deploy to Hugging Face Spaces
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git config --global user.email "ci@github.com"
+          git config --global user.name "GitHub Actions"
+          git remote add hf https://Richard9905:${HF_TOKEN}@huggingface.co/spaces/Richard9905/agentic_ai_web_chatbot
+          rm -rf screenshots/
+          git add .
+          git commit -m "Internal: cleanup binaries for HF deployment" || echo "No changes to commit"
+          git push hf main --force

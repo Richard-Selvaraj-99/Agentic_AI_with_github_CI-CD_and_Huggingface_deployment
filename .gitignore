@@ -1,0 +1,10 @@
+venv/
+__pycache__
+_pycache_
+.pytest_cache
+.cache
+.venv
+*.png
+*.jpg
+*.jpeg
+*.gif

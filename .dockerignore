@@ -1,0 +1,52 @@
+# Ignore Git history and metadata
+.git/
+.gitignore
+.gitattributes
+
+# Python caches and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Testing/coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.sw?
+
+# Logs and temp files
+*.log
+logs/
+tmp/
+temp/
+
+# Environment files (secrets)
+.env
+.env.*
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Docker internals
+.dockerignore
+Dockerfile
+
+# Misc
+screenshots/
