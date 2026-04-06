@@ -11,6 +11,7 @@ class LoadStreamlitUI:
     def load_streamlit_ui(self):
         st.set_page_config(page_title= "🤖 " + self.config.get_page_title(), layout="wide")
         st.header("🤖 " + self.config.get_page_title())
+        st.info("the bot is usuable with your own Groq and Tavily api which is free for everyone.if need help to obtain free groq and tavily api please contact richard657299@gmail.com ")
 
 
         with st.sidebar:
